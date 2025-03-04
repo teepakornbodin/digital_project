@@ -5,10 +5,10 @@ export default function Home() {
   const [credit, setCredit] = useState(0);
   const [cashReceived, setCashReceived] = useState(0);
   const [step, setStep] = useState("home");
-  const [selectedBank, setSelectedBank] = useState(null);
+  const [selectedBank, setSelectedBank] = useState<string | null>(null); // Specify type
   const [enteredCredit, setEnteredCredit] = useState(0);
-  const [selectedGame, setSelectedGame] = useState(null);
-  const [selectedAmount, setSelectedAmount] = useState(null);
+  const [selectedGame, setSelectedGame] = useState<string | null>(null); // Specify type
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null); // Specify type
 
   const bankRates = {
     "true wallet": {
@@ -40,20 +40,22 @@ export default function Home() {
     setStep("selectBank");
   };
 
-  const handleBankSelect = (bank) => {
+  const handleBankSelect = (bank: string) => { // Specify type for 'bank'
     setSelectedBank(bank);
     setEnteredCredit(0);
     setStep("enterCredit");
   };
 
-  const handleCreditInput = (value) => {
+  const handleCreditInput = (value: number) => { // Specify type for 'value'
     if (value >= 1 && value <= 15) {
       setEnteredCredit(value);
     }
   };
 
   const confirmDeposit = () => {
-    setCredit((prev) => prev + enteredCredit + bankRates[selectedBank].rate);
+    if (selectedBank) {
+      setCredit((prev) => prev + enteredCredit + bankRates[selectedBank].rate);
+    }
     setStep("home");
   };
 
@@ -61,16 +63,16 @@ export default function Home() {
     setStep("selectGame");
   };
 
-  const handleGameSelect = (game) => {
+  const handleGameSelect = (game: string) => { // Specify type for 'game'
     setSelectedGame(game);
     setStep("selectAmount");
   };
 
-  const handleAmountSelect = (amount) => {
+  const handleAmountSelect = (amount: number) => { // Specify type for 'amount'
     const requiredCredit = amount;
     if (credit >= requiredCredit) {
       setCredit((prev) => prev - requiredCredit);
-      const totalCash = requiredCredit + gameRates[selectedGame].rate;
+      const totalCash = requiredCredit + gameRates[selectedGame as string].rate;
       setCashReceived(totalCash);
       alert(`แลกแคชสำเร็จ! ได้รับแคช: ${totalCash}`);
       setStep("showCash");
