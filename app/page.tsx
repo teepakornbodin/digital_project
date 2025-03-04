@@ -5,10 +5,10 @@ export default function Home() {
   const [credit, setCredit] = useState(0);
   const [cashReceived, setCashReceived] = useState(0);
   const [step, setStep] = useState("home");
-  const [selectedBank, setSelectedBank] = useState<string | null>(null); // Specify type
+  const [selectedBank, setSelectedBank] = useState<keyof typeof bankRates | null>(null); // แก้ไขตรงนี้
   const [enteredCredit, setEnteredCredit] = useState(0);
-  const [selectedGame, setSelectedGame] = useState<string | null>(null); // Specify type
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null); // Specify type
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedAmount, setSelectedAmount] = useState(null);
 
   const bankRates = {
     "true wallet": {
@@ -40,13 +40,13 @@ export default function Home() {
     setStep("selectBank");
   };
 
-  const handleBankSelect = (bank: string) => { // Specify type for 'bank'
+  const handleBankSelect = (bank: keyof typeof bankRates) => { // แก้ไขตรงนี้
     setSelectedBank(bank);
     setEnteredCredit(0);
     setStep("enterCredit");
   };
 
-  const handleCreditInput = (value: number) => { // Specify type for 'value'
+  const handleCreditInput = (value: number) => {
     if (value >= 1 && value <= 15) {
       setEnteredCredit(value);
     }
@@ -54,7 +54,7 @@ export default function Home() {
 
   const confirmDeposit = () => {
     if (selectedBank) {
-      setCredit((prev) => prev + enteredCredit + bankRates[selectedBank].rate);
+      setCredit((prev) => prev + enteredCredit + bankRates[selectedBank].rate); // แก้ไขตรงนี้
     }
     setStep("home");
   };
@@ -63,16 +63,16 @@ export default function Home() {
     setStep("selectGame");
   };
 
-  const handleGameSelect = (game: string) => { // Specify type for 'game'
+  const handleGameSelect = (game: string) => {
     setSelectedGame(game);
     setStep("selectAmount");
   };
 
-  const handleAmountSelect = (amount: number) => { // Specify type for 'amount'
+  const handleAmountSelect = (amount: number) => {
     const requiredCredit = amount;
     if (credit >= requiredCredit) {
       setCredit((prev) => prev - requiredCredit);
-      const totalCash = requiredCredit + gameRates[selectedGame as string].rate;
+      const totalCash = requiredCredit + gameRates[selectedGame as keyof typeof gameRates].rate; // แก้ไขตรงนี้
       setCashReceived(totalCash);
       alert(`แลกแคชสำเร็จ! ได้รับแคช: ${totalCash}`);
       setStep("showCash");
@@ -104,8 +104,8 @@ export default function Home() {
           <h2 className="text-xl font-bold mb-4">เลือกธนาคาร</h2>
           <div className="grid grid-cols-2 gap-4 mb-4">
             {Object.keys(bankRates).map((bank) => (
-              <button key={bank} onClick={() => handleBankSelect(bank)} className="bg-gray-300 p-2 rounded-lg">
-                <img src={bankRates[bank].imageUrl} alt={bank} className="w-6 h-6 mr-2 inline-block" />
+              <button key={bank} onClick={() => handleBankSelect(bank as keyof typeof bankRates)} className="bg-gray-300 p-2 rounded-lg">
+                <img src={bankRates[bank as keyof typeof bankRates].imageUrl} alt={bank} className="w-6 h-6 mr-2 inline-block" />
                 {bank}
               </button>
             ))}
@@ -141,8 +141,8 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-4 mb-4">
             {Object.keys(gameRates).map((game) => (
               <button key={game} onClick={() => handleGameSelect(game)} className="bg-gray-300 p-2 rounded-lg">
-                <img src={gameRates[game].imageUrl} alt={game} className="w-auto h-auto mr-2 inline-block" />
-                {game} (+{gameRates[game].rate})
+                <img src={gameRates[game as keyof typeof gameRates].imageUrl} alt={game} className="w-auto h-auto mr-2 inline-block" />
+                {game} (+{gameRates[game as keyof typeof gameRates].rate})
               </button>
             ))}
           </div>
